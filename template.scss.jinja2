@@ -1,0 +1,103 @@
+{% macro prop(value, default) -%}
+    {% if value %}${{ value }}{% else %}{{ default }}{% endif %}
+{%- endmacro -%}
+
+{% macro boxShadow(outerShadow, innerShadow) -%}
+    {%- if outerShadow and innerShadow %}
+    box-shadow: ${{ outerShadow }}, ${{ innerShadow }};
+    {% else %}
+    box-shadow: ${{ outerShadow if outerShadow else innerShadow }};
+    {% endif %}
+{%- endmacro -%}
+
+// Properties -------------------------------------------------------
+
+// Colors
+{%- for color in colors %}
+${{ color.name }}: rgba({{ color.colorRed }}, {{ color.colorGreen }}, {{ color.colorBlue }}, {{ color.colorAlpha }}) !default;
+{%- endfor %}
+
+// Measures
+{%- for measure in measures %}
+${{ measure.name }}: {{ measure.measureValue }}{{ measure.measureUnit }} !default;
+{%- endfor %}
+
+// Outer Shadows
+{%- for outerShadow in outerShadows %}
+${{ outerShadow.name }}: {{ prop(outerShadow.hasShadowOffsetX, 0) }} {{ prop(outerShadow.hasShadowOffsetY, 0) }} {{ prop(outerShadow.hasShadowBlur, 0) }} {{ prop(outerShadow.hasShadowSpread, 0) }} ${{ outerShadow.hasShadowColor }} !default;
+{%- endfor  %}
+
+// Inner Shadows
+{%- for innerShadow in innerShadows %}
+${{ innerShadow.name }}: {{ prop(innerShadow.hasShadowOffsetX, 0) }} {{ prop(innerShadow.hasShadowOffsetY, 0) }} {{ prop(innerShadow.hasShadowBlur, 0) }} {{ prop(innerShadow.hasShadowSpread, 0) }} ${{ innerShadow.hasShadowColor }} inset !default;
+{%- endfor  %}
+
+// <custom-_properties>
+{{ harvested['_properties'] }}
+// </custom-_properties>
+
+
+// Mixins -----------------------------------------------------------
+
+// Text Styles
+{%- for textStyle in textStyles %}
+@mixin {{ textStyle.name }} {
+    {% if textStyle.hasTextStyleColor %}color: ${{ textStyle.hasTextStyleColor }};{% endif %}
+    {% if textStyle.hasTextStyleFontSize %}font-size: ${{ textStyle.hasTextStyleFontSize }};{% endif %}
+    {% if textStyle.textStyleFontWeight %}font-weight: {{ textStyle.textStyleFontWeight }};{% endif %}
+    {% if textStyle.textStyleFontFamily %}font-family: "{{ textStyle.textStyleFontFamily }}";{% endif %}
+
+    // <custom-{{ textStyle.name }}>
+{{ harvested[textStyle.name] }}
+    // </custom-{{ textStyle.name }}>
+}
+{%- endfor %}
+
+// Borders
+{%- for border in borders %}
+@mixin {{ border.name }} {
+    border: ${{ border.hasBorderWidth }} solid ${{ border.hasBorderColor }};
+
+    // <custom-{{ border.name }}>
+{{ harvested[border.name] }}
+    // </custom-{{ border.name }}>
+}
+{%- endfor %}
+
+// Color Fills
+{%- for colorFill in colorFills %}
+@mixin {{ colorFill.name }} {
+    background-color: ${{ colorFill.hasFillColor }};
+
+    // <custom-{{ colorFill.name }}>
+{{ harvested[colorFill.name] }}
+    // </custom-{{ colorFill.name }}>
+}
+{%- endfor  %}
+
+
+// <custom-_mixins>
+{{ harvested['_mixins'] }}
+// </custom-_mixins>
+
+
+// Classes ----------------------------------------------------------
+
+// Elements
+{%- for element in elements %}
+.{{ element.name }} {
+    {% if element.hasBorder %}@include {{ element.hasBorder }};{% endif %}
+    {% if element.hasFill %}@include {{ element.hasFill }};{% endif %}
+    {% if element.hasOuterShadow or element.hasInnerShadow -%}
+    {{ boxShadow(element.hasOuterShadow, element.hasInnerShadow) }}
+    {%- endif  %}
+
+    // <custom-{{ element.name }}>
+{{ harvested[element.name] }}
+    // </custom-{{ element.name }}>
+}
+{%- endfor  %}
+
+// <custom-_elements>
+{{ harvested['_elements'] }}
+// </custom-_elements>
