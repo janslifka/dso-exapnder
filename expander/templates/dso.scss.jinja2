@@ -39,17 +39,17 @@ ${{ innerShadow.name }}: {{ prop(innerShadow.hasShadowOffsetX, 0) }} {{ prop(inn
 
 // Mixins -----------------------------------------------------------
 
-// Text Styles
-{%- for textStyle in textStyles %}
-@mixin {{ textStyle.name }} {
-    {% if textStyle.hasTextStyleColor %}color: ${{ textStyle.hasTextStyleColor }};{% endif %}
-    {% if textStyle.hasTextStyleFontSize %}font-size: ${{ textStyle.hasTextStyleFontSize }};{% endif %}
-    {% if textStyle.textStyleFontWeight %}font-weight: {{ textStyle.textStyleFontWeight }};{% endif %}
-    {% if textStyle.textStyleFontFamily %}font-family: "{{ textStyle.textStyleFontFamily }}";{% endif %}
+// Typographies
+{%- for typography in typographies %}
+@mixin {{ typography.name }} {
+    {% if typography.hasTypographyColor %}color: ${{ typography.hasTypographyColor }};{% endif %}
+    {% if typography.hasTypographyFontSize %}font-size: ${{ typography.hasTypographyFontSize }};{% endif %}
+    {% if typography.typographyFontWeight %}font-weight: {{ typography.typographyFontWeight }};{% endif %}
+    {% if typography.typographyFontFamily %}font-family: "{{ typography.typographyFontFamily }}";{% endif %}
 
-    // <custom-{{ textStyle.name }}>
-{{ harvested[textStyle.name] }}
-    // </custom-{{ textStyle.name }}>
+    // <custom-{{ typography.name }}>
+{{ harvested[typography.name] }}
+    // </custom-{{ typography.name }}>
 }
 {%- endfor %}
 
@@ -88,6 +88,7 @@ ${{ innerShadow.name }}: {{ prop(innerShadow.hasShadowOffsetX, 0) }} {{ prop(inn
 .{{ element.name }} {
     {% if element.hasBorder %}@include {{ element.hasBorder }};{% endif %}
     {% if element.hasFill %}@include {{ element.hasFill }};{% endif %}
+    {% if element.hasTypography %}@include {{ element.hasTypography }};{% endif %}
     {% if element.hasOuterShadow or element.hasInnerShadow -%}
     {{ boxShadow(element.hasOuterShadow, element.hasInnerShadow) }}
     {%- endif  %}
